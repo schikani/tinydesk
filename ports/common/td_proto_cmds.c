@@ -37,15 +37,18 @@ static bool parse_u16(const char *s, uint16_t *out)
     return true;
 }
 
+/* No default: with every state listed, -Wswitch reports a new one. */
 static const char *state_name(td_mqtt_state_t s)
 {
     switch (s) {
+    case TD_MQTT_OFF: return "not connected";
     case TD_MQTT_CONNECTING: return "connecting";
+    case TD_MQTT_TLS_HANDSHAKE: return "TLS handshake";
     case TD_MQTT_WAIT_CONNACK: return "logging in";
     case TD_MQTT_CONNECTED: return "connected";
     case TD_MQTT_RETRY: return "reconnecting";
-    default: return "not connected";
     }
+    return "not connected";
 }
 
 /* Wait (driving the connection) until it settles or timeout_ms passes. */
