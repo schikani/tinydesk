@@ -596,7 +596,9 @@ static bool save_to(const char *path)
         set_status("Save failed");
         return false;
     }
-    snprintf(E.path, sizeof(E.path), "%s", path);
+    /* save() passes E.path itself; copying a string onto itself is
+     * undefined (glibc empties it, and the next save asks for a name). */
+    if (path != E.path) snprintf(E.path, sizeof(E.path), "%s", path);
     if (E.undo) {
         E.undo->saved = E.undo->top;
         E.undo->merge = false;       /* typing after a save is a new step */

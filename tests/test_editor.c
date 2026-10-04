@@ -197,6 +197,21 @@ static void test_changed_follows_the_save_point(void)
     CHECK(!changed());
 }
 
+static void test_save_twice(void)
+{
+    /* The file keeps its name after a save: the next one writes it again
+     * instead of asking for a name. */
+    open_file("1");
+    key(TD_KEY_END, 0);
+    type("2");
+    ctrl('s');
+    CHECK(strncmp(s_ed->title, "a.txt", 5) == 0);
+    type("3");
+    ctrl('s');
+    CHECK(td_win_focused() == s_ed);
+    CHECK(file_is("123"));
+}
+
 static void test_new_edit_ends_redo(void)
 {
     open_file("");
@@ -389,6 +404,7 @@ int main(void)
     td_init(&s_hal);   /* no size answer: 80x25 */
     test_undo_by_word();
     test_changed_follows_the_save_point();
+    test_save_twice();
     test_new_edit_ends_redo();
     test_delete_runs();
     test_typing_over_a_selection();
